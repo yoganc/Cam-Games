@@ -1,0 +1,82 @@
+{
+ "source": "catalog/dd_hand/p7.pt",
+ "iteration": 400,
+ "game_params": {
+  "players": 7,
+  "num_suits": 4,
+  "num_cards_per_suit": 13,
+  "num_tricks_fixed": -1,
+  "off_bid_penalty": false,
+  "points_per_trick": 1,
+  "scoring": "square",
+  "num_decks": 2
+ },
+ "features": "multideck",
+ "layout": {
+  "num_players": 7,
+  "num_suits": 4,
+  "deck_size": 52,
+  "max_tricks": 14,
+  "num_decks": 2,
+  "copies": 2
+ },
+ "obs_size": 1678,
+ "deal_obs_size": 1678,
+ "num_actions": 67,
+ "bid_action_offset": 52,
+ "feature_offsets": {
+  "seat_vs_dealer": 0,
+  "bidding": 7,
+  "num_tricks": 8,
+  "tricks_left": 22,
+  "trump_suit": 37,
+  "trump_card": 41,
+  "hand": 93,
+  "seen": 197,
+  "unseen": 301,
+  "hand_suit_len": 405,
+  "unseen_suit_len": 461,
+  "trick_cards": 565,
+  "leading": 877,
+  "lead_suit": 878,
+  "winning_card": 882,
+  "winning_seat": 934,
+  "cancelled": 941,
+  "bids": 993,
+  "won": 1105,
+  "need": 1210,
+  "bid_pressure": 1413,
+  "voids": 1442,
+  "wins_now": 1470,
+  "cancels_winner": 1522,
+  "boss": 1574,
+  "boss_but_copy": 1626
+ },
+ "match": null,
+ "layers": [
+  {
+   "name": "trunk.0",
+   "rows": 512,
+   "cols": 1678,
+   "w": 0,
+   "b": 3436544,
+   "relu": true
+  },
+  {
+   "name": "trunk.2",
+   "rows": 256,
+   "cols": 512,
+   "w": 3438592,
+   "b": 3962880,
+   "relu": true
+  },
+  {
+   "name": "policy",
+   "rows": 67,
+   "cols": 256,
+   "w": 3963904,
+   "b": 4032512,
+   "relu": false
+  }
+ ]
+}

@@ -41,7 +41,12 @@ export class ClientStateOhHell extends ClientStateGameBase {
         let options = this.baseState.serverData.options
         if (options.robots !== undefined) {
             this.canvas.robotsSpinner.value = options.robots
+            this.canvas.trainedRobotsSpinner.max = options.robots
         }
+        if (options.trainedRobots !== undefined) {
+            this.canvas.trainedRobotsSpinner.value = options.trainedRobots
+        }
+        this.canvas.renderTrainedModels()
         if (options.D !== undefined) {
             this.canvas.doubleDeckCheckBox.checked = options.D == 2
         }
@@ -53,6 +58,7 @@ export class ClientStateOhHell extends ClientStateGameBase {
 
     updateServerData_players(type, diff) {
         super.updateServerData_players(type, diff)
+        if (this.canvas.renderTrainedModels) this.canvas.renderTrainedModels()
 
         let myIndex = this.baseState.myPlayer.index
         if (type == 'update' && diff.players[myIndex] && diff.players[myIndex].hand && diff.players[myIndex].hand.length > 0) {
@@ -271,6 +277,11 @@ class OhHellCanvas extends CanvasBase {
         // listeners
         this.robotsSpinner = document.getElementById("igRobots")
         this.robotsSpinner.addEventListener('change', () => { this.client.state.sendOptionsUpdate({ robots: this.robotsSpinner.value }) })
+
+        this.trainedRobotsSpinner = document.getElementById("igTrainedRobots")
+        this.trainedRobotsSpinner.addEventListener('change', () => { this.client.state.sendOptionsUpdate({ trainedRobots: this.trainedRobotsSpinner.value }) })
+
+        this.trainedModelsDiv = document.getElementById("igTrainedModels")
 
         this.doubleDeckCheckBox = document.getElementById("igDoubleDeck")
         this.doubleDeckCheckBox.addEventListener('change', () => { this.client.state.sendOptionsUpdate({ D: this.doubleDeckCheckBox.checked ? 2 : 1 }) })
@@ -821,18 +832,64 @@ class OhHellCanvas extends CanvasBase {
         this.paintTrump();
     }
 
+    // One model menu per AI Trained bot, listing the models (from the server's
+    // trained_ai catalog) that have a version for this many players and decks.
+    renderTrainedModels() {
+        const state = this.client.state.baseState
+        const options = state.serverData && state.serverData.options
+        const row = document.getElementById("trainedModelsRow")
+        if (!options || !this.trainedModelsDiv || !row) return
+        const count = parseInt(options.trainedRobots) || 0
+        const catalog = options.trainedCatalog || []
+        const N = state.serverData.players ? state.serverData.players.length : 0
+        const D = options.D == 2 ? 2 : 1
+        const chosen = options.trainedModels || []
+        row.style.display = count > 0 && document.getElementById("trainedOptionsRow").style.display != 'none' ? 'table-row' : 'none'
+        const sig = JSON.stringify([count, N, D, chosen, catalog.map(m => m.id), !!(state.myPlayer && state.myPlayer.host)])
+        if (sig == this.trainedModelsSig) return
+        this.trainedModelsSig = sig
+        this.trainedModelsDiv.innerHTML = ''
+        for (let k = 0; k < count; k++) {
+            const current = chosen[k] || 'champion'
+            const sel = document.createElement('select')
+            sel.className = 'bg-white rounded-lg border border-black h-6 text-sm mb-1'
+            for (const m of catalog) {
+                const ok = (m.decks[D] || []).includes(N)
+                if (!ok && m.id != current) continue
+                const o = document.createElement('option')
+                o.value = m.id
+                o.textContent = m.name + (ok ? '' : ` (no ${N}-player${D == 2 ? ' double-deck' : ''} version)`)
+                sel.appendChild(o)
+            }
+            sel.value = current
+            sel.disabled = !(state.myPlayer && state.myPlayer.host)
+            sel.addEventListener('change', () => {
+                const models = []
+                for (let i = 0; i < count; i++) models.push(chosen[i] || 'champion')
+                models[k] = sel.value
+                this.client.state.sendOptionsUpdate({ trainedModels: models })
+            })
+            const line = document.createElement('div')
+            line.appendChild(document.createTextNode(`${k + 1}: `))
+            line.appendChild(sel)
+            this.trainedModelsDiv.appendChild(line)
+        }
+    }
+
     updateHostOptions() {
         if (!this.client.state.baseState.myPlayer) {
             return
         }
         if (!this.client.state.baseState.myPlayer.host) {
             this.robotsSpinner.disabled = true
+            this.trainedRobotsSpinner.disabled = true
             this.doubleDeckCheckBox.disabled = true
             this.teamsCheckBox.disabled = true
             disableButton(this.igStart)
             disableButton(this.igRandomizeTeams)
         } else {
             this.robotsSpinner.disabled = false
+            this.trainedRobotsSpinner.disabled = false
             this.doubleDeckCheckBox.disabled = false
             this.teamsCheckBox.disabled = false
             enableButton(this.igStart)

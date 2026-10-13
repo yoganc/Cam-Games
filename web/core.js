@@ -1,4 +1,5 @@
 const log = require('./logging').log
+const trainedAi = require('./trained_ai/strategy')
 var ai = require('./ai');
 var card = require('./card');
 
@@ -680,7 +681,25 @@ class PlayersList {
 
     updateOptions(options) {
         this.adjustRobotCount(options.robots);
+        this.assignTrainedRobots(options.trainedRobots, options.trainedModels);
         //this.emitAll('options', options);
+    }
+
+    // The first `count` robots play with the trained models (trained_ai/), robot k
+    // with models[k] (a catalog id, default Champion); their names say which.
+    assignTrainedRobots(count, models) {
+        this.getRobots().forEach((robot, k) => {
+            if (robot.baseName === undefined) {
+                robot.baseName = robot.name.replace(/ bot$/, '')
+            }
+            robot.trained = k < (parseInt(count) || 0)
+            robot.trainedModel = robot.trained ? ((models || [])[k] || trainedAi.DEFAULT_MODEL) : undefined
+            let name = robot.baseName + (robot.trained ? ` (${trainedAi.modelName(robot.trainedModel)})` : ' bot')
+            if (name != robot.name) {
+                robot.name = name
+                this.core.addUpdateDiff({ players: { [robot.index]: { name: name } } })
+            }
+        })
     }
 
     nextUnkicked(i) {
@@ -1063,6 +1082,8 @@ class Team {
 class Options {
     constructor(options) {
         this.robots = 0;
+        this.trainedRobots = 0;
+        this.trainedModels = [];  // per AI Trained bot: a trained_ai catalog id
         this.D = 1;
         this.teams = false;
         this.oregon = false;
@@ -1071,6 +1092,10 @@ class Options {
     toDict() {
         return {
             robots: this.robots,
+            trainedRobots: this.trainedRobots,
+            trainedModels: this.trainedModels,
+            // (what the menus offer: [{id, name, decks: {"1": [players...], "2": [...]}}])
+            trainedCatalog: trainedAi.catalog().models,
             D: this.D,
             teams: this.teams,
             oregon: this.oregon
@@ -1079,6 +1104,10 @@ class Options {
 
     update(options) {
         this.robots = parseInt(options.robots);
+        this.trainedRobots = Math.max(0, Math.min(parseInt(options.trainedRobots) || 0, this.robots));
+        const known = new Set(trainedAi.catalog().models.map(m => m.id));
+        this.trainedModels = (Array.isArray(options.trainedModels) ? options.trainedModels : [])
+            .slice(0, this.trainedRobots).map(id => known.has(id) ? id : trainedAi.DEFAULT_MODEL);
         this.D = options.D;
         this.teams = options.teams;
         this.oregon = options.oregon;
@@ -1114,7 +1143,7 @@ class Core {
     updateOptions(options) {
         this.options.update(options);
         this.addUpdateDiff({ 'options': this.options })
-        this.players.updateOptions(options);
+        this.players.updateOptions(this.options);
         this.flushDiffs()
     }
 
@@ -1186,7 +1215,8 @@ class Core {
             {
                 N: this.players.size(),
                 D: this.options.D,
-                T: this.options.teams ? T : 0
+                T: this.options.teams ? T : 0,
+                trained: this.players.players.map(p => p.trained === true ? p.trainedModel : null)
             }
         );
         this.players.attachStrategyModules(modules);

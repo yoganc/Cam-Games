@@ -81,6 +81,8 @@ export class ClientStateHeartsPreGame extends createClientStatePreGame(ClientSta
     enter(data) {
         super.enter(data)
         document.getElementById("doubleDeckOptionsRow").style.display = 'none'
+        document.getElementById("trainedOptionsRow").style.display = 'none'
+        document.getElementById("trainedModelsRow").style.display = 'none'
         document.getElementById("teamsOptionsRow").style.display = 'none'
     }
 

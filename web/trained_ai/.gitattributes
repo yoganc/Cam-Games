@@ -1,0 +1,2 @@
+# Model weights: never convert line endings.
+*.bin binary

@@ -7,6 +7,7 @@ var fs = require('fs');
 var robotNames = fs.readFileSync('./misc/firstnames.txt', 'utf8').replace('\r', '').split('\n');
 
 const _euchre = require('./build/Release/euchre');
+const trainedAi = require('./trained_ai/strategy');
 
 // shared utils
 function log(msg, tabs) {
@@ -1228,16 +1229,7 @@ class StrategyModuleEuchreCoreOIT extends StrategyModuleEuchreCore {
 function buildModules(mode, params) {
     switch (mode) {
         case 'Oh Hell':
-            if (params.T != 0) {
-                return buildModulesOITeam(params.N, params.D, params.T);
-                // try {
-                //     return buildModulesOITeam(params.N, params.D, params.T);
-                // } catch (e) {
-                //     console.log(`Failed to load OIT for params={N: ${params.N}, D: ${params.D}, T: ${params.T}}. Falling back to OI.`);
-                // }
-            }
-
-            return buildModulesOI(params.N, params.D);
+            return withTrained(buildModulesOhHell(params), params);
 
         case 'Hearts':
             return new Array(params.N).fill(0).map(x => new StrategyModuleDumb());
@@ -1245,6 +1237,40 @@ function buildModules(mode, params) {
         case 'Euchre':
             return new Array(params.N).fill(0).map(x => new StrategyModuleEuchreCoreOIT());
     }
+}
+
+// Seats with params.trained[i] = a model id play with that trained model
+// (trained_ai/), keeping the built-in module underneath for analysis. A seat
+// whose model has no version for this table (teams, player or deck count)
+// keeps the built-in AI.
+function withTrained(modules, params) {
+    if (!params.trained || !params.trained.some(x => x)) {
+        return modules;
+    }
+    return modules.map((m, i) => {
+        const id = params.trained[i];
+        if (!id) {
+            return m;
+        }
+        if (!trainedAi.supported(id, params.N, params.D, params.T)) {
+            console.log(`AI Trained model ${id} has no model for N=${params.N} D=${params.D} T=${params.T}; seat ${i} uses the built-in AI.`);
+            return m;
+        }
+        return new trainedAi.StrategyModuleTrained(params.N, params.D, m, id);
+    });
+}
+
+function buildModulesOhHell(params) {
+    if (params.T != 0) {
+        return buildModulesOITeam(params.N, params.D, params.T);
+        // try {
+        //     return buildModulesOITeam(params.N, params.D, params.T);
+        // } catch (e) {
+        //     console.log(`Failed to load OIT for params={N: ${params.N}, D: ${params.D}, T: ${params.T}}. Falling back to OI.`);
+        // }
+    }
+
+    return buildModulesOI(params.N, params.D);
 }
 
 function buildModulesOI(N, D) {

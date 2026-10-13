@@ -339,6 +339,7 @@ export function createClientStatePreGame(base) {
             this.baseState.preselected.clear(0)
             this.baseState.scoreWidth = 0
             document.getElementById("doubleDeckOptionsRow").style.display = 'table-row'
+            document.getElementById("trainedOptionsRow").style.display = 'table-row'
             document.getElementById("teamsOptionsRow").style.display = 'table-row'
             document.getElementById("oregonOptionsRow").style.display = 'table-row'
         }

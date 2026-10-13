@@ -1,0 +1,122 @@
+{
+ "source": "catalog/sq_match/p5.pt",
+ "iteration": 1350,
+ "game_params": {
+  "players": 5,
+  "num_suits": 4,
+  "num_cards_per_suit": 13,
+  "num_tricks_fixed": -1,
+  "off_bid_penalty": false,
+  "points_per_trick": 1,
+  "scoring": "square"
+ },
+ "features": "engineered",
+ "layout": {
+  "num_players": 5,
+  "num_suits": 4,
+  "deck_size": 52,
+  "max_tricks": 10,
+  "num_decks": 1,
+  "copies": 1
+ },
+ "obs_size": 1029,
+ "deal_obs_size": 926,
+ "num_actions": 63,
+ "bid_action_offset": 52,
+ "feature_offsets": {
+  "seat_vs_dealer": 0,
+  "bidding": 5,
+  "num_tricks": 6,
+  "tricks_left": 16,
+  "trump_suit": 27,
+  "trump_card": 31,
+  "hand": 83,
+  "seen": 135,
+  "hand_suit_len": 187,
+  "unseen_suit_len": 239,
+  "trick_cards": 291,
+  "leading": 499,
+  "lead_suit": 500,
+  "winning_card": 504,
+  "winning_seat": 556,
+  "bids": 561,
+  "won": 621,
+  "need": 676,
+  "bid_pressure": 781,
+  "voids": 802,
+  "wins_now": 822,
+  "boss": 874
+ },
+ "match": {
+  "num_deals": 23,
+  "schedule": [
+   10,
+   9,
+   8,
+   7,
+   6,
+   5,
+   4,
+   3,
+   2,
+   1,
+   1,
+   1,
+   1,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10
+  ],
+  "gap_edges": [
+   -40,
+   -30,
+   -20,
+   -15,
+   -10,
+   -6,
+   -3,
+   0,
+   3,
+   6,
+   10,
+   15,
+   20,
+   30,
+   40
+  ],
+  "behavior": null
+ },
+ "layers": [
+  {
+   "name": "trunk.0",
+   "rows": 512,
+   "cols": 1029,
+   "w": 0,
+   "b": 2107392,
+   "relu": true
+  },
+  {
+   "name": "trunk.2",
+   "rows": 256,
+   "cols": 512,
+   "w": 2109440,
+   "b": 2633728,
+   "relu": true
+  },
+  {
+   "name": "policy",
+   "rows": 63,
+   "cols": 256,
+   "w": 2634752,
+   "b": 2699264,
+   "relu": false
+  }
+ ]
+}

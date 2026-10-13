@@ -1,0 +1,110 @@
+{
+ "models": [
+  {
+   "id": "champion",
+   "name": "Champion",
+   "decks": {
+    "1": [
+     3,
+     4,
+     5,
+     6,
+     7
+    ],
+    "2": [
+     5,
+     6,
+     7,
+     8,
+     9,
+     10
+    ]
+   }
+  },
+  {
+   "id": "sq_hand",
+   "name": "Square Hand Player",
+   "decks": {
+    "1": [
+     3,
+     4,
+     5,
+     6,
+     7
+    ]
+   }
+  },
+  {
+   "id": "sq_match",
+   "name": "Square Match Player",
+   "decks": {
+    "1": [
+     3,
+     4,
+     5,
+     6,
+     7
+    ]
+   }
+  },
+  {
+   "id": "sq_reader",
+   "name": "Square Reader",
+   "decks": {
+    "1": [
+     3,
+     4,
+     5,
+     6,
+     7
+    ]
+   }
+  },
+  {
+   "id": "sq_closer",
+   "name": "Square Closer",
+   "decks": {
+    "1": [
+     3,
+     4,
+     5,
+     6,
+     7
+    ]
+   }
+  },
+  {
+   "id": "sq_allround",
+   "name": "Square All-Rounder",
+   "decks": {
+    "1": [
+     3,
+     4,
+     5,
+     6,
+     7
+    ]
+   }
+  },
+  {
+   "id": "dd_hand",
+   "name": "Double-Deck Hand Player",
+   "decks": {
+    "2": [
+     5,
+     6,
+     7,
+     8,
+     9,
+     10
+    ]
+   }
+  }
+ ],
+ "aliases": {
+  "champion": {
+   "1": "sq_hand",
+   "2": "dd_hand"
+  }
+ }
+}

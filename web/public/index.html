@@ -77,6 +77,14 @@
                         <p class="font-bold w-1/2 h-8 text-right" style="display:table-cell;">Robots:</p>
                         <input type="number" min="0" max="13" value="0" class="bg-white rounded-3xl border border-black w-14 h-6 p-2" style="display:table-cell;" id="igRobots">
                     </div>
+                    <div class="w-full" style="display:none;" id="trainedOptionsRow" title="How many of the robots play with one of the trained models instead of the built-in AI (no teams; single deck 3-7 players, double deck 5-10)">
+                        <p class="font-bold w-1/2 h-8 text-right" style="display:table-cell;">AI Trained bots:</p>
+                        <input type="number" min="0" max="13" value="0" class="bg-white rounded-3xl border border-black w-14 h-6 p-2" style="display:table-cell;" id="igTrainedRobots">
+                    </div>
+                    <div class="w-full" style="display:none;" id="trainedModelsRow" title="Which model each AI Trained bot plays (only models with a version for this many players and decks are listed)">
+                        <p class="font-bold w-1/2 h-8 text-right align-top" style="display:table-cell;">AI Trained models:</p>
+                        <div style="display:table-cell;" class="text-left text-sm" id="igTrainedModels"></div>
+                    </div>
 
                     <div class="w-full" style="display:none;" id="doubleDeckOptionsRow">
                         <p class="font-bold w-1/2 h-8 text-right" style="display:table-cell;">Double deck:</p>
