@@ -1085,6 +1085,7 @@ class Options {
         this.trainedRobots = 0;
         this.trainedModels = [];  // per AI Trained bot: a trained_ai catalog id
         this.D = 1;
+        this.trainedCatalog = trainedAi.catalog().models;
         this.teams = false;
         this.oregon = false;
     }
@@ -1095,7 +1096,7 @@ class Options {
             trainedRobots: this.trainedRobots,
             trainedModels: this.trainedModels,
             // (what the menus offer: [{id, name, decks: {"1": [players...], "2": [...]}}])
-            trainedCatalog: trainedAi.catalog().models,
+            trainedCatalog: this.trainedCatalog,
             D: this.D,
             teams: this.teams,
             oregon: this.oregon
